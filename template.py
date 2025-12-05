@@ -15,21 +15,6 @@ H265TEMPLATES = [
     "hd5",
     "sd5",
     "ld5",
-    "uhd560a",
-    "uhd560s",
-    "uhd5s",
-    "hd5s",
-    "hd5c0",
-    "hd5c1",
-    "hd5c2",
-    "hd5c3",
-    "hd5d0",
-    "hd5d1",
-    "hd5d2",
-    "hd5d3",
-    "hd560a",
-    "sd5c",
-    "ld5a",
 ]
 
 def ffmpeg_cmd(template_name: str, input: str, index: int):
