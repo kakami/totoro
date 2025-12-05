@@ -35,8 +35,10 @@ async def run():
     parser.add_argument("-t", "--template", type=str, default="uhd60", help="template name")
     parser.add_argument("-l", "--list", action="store_true", help="list available templates")
     parser.add_argument("-C", "--command", action="store_true", help="print ffmpeg command only")
+    parser.add_argument("--input", type=str, default="/home/iuz/video/dota_60_1080.mp4", help="input file path")
     args = parser.parse_args()
 
+    input = args.input
     if args.list:
         from template import H264TEMPLATES, H265TEMPLATES
         print("H264 Templates:")
@@ -46,7 +48,7 @@ async def run():
         return
 
     if args.command:
-        print(ffmpeg_cmd(args.template, 0))
+        print(ffmpeg_cmd(args.template, input, 0))
         return
 
     tasks = []
@@ -57,7 +59,7 @@ async def run():
         t = asyncio.ensure_future(
             run_ffmpeg(
                 f"task{i+1}",
-                ffmpeg_cmd(args.template, i),
+                ffmpeg_cmd(args.template, input, i),
                 queue
             )
         )
