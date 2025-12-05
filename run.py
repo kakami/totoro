@@ -13,16 +13,20 @@ async def run_ffmpeg(name: str, cmd: str, queue: asyncio.Queue):
     )
 
     async def read_stream(stream, prefix):
+        buffer = b""
         while True:
-            line = await stream.readline()
-            if not line:
+            chunk = await stream.read(1024)
+            if not chunk:
                 break
-            text = line.decode().rstrip()
-            match = re.search(pattern, text)
-            if match:
-                speed = float(match.group(1))
-                print(f"[{prefix}] {speed}")
-                await queue.put(speed)
+            buffer += chunk
+            while b"\r" in buffer:
+                line, buffer = buffer.split(b"\r", 1)
+                text = line.decode(errors="ignore").strip()
+                match = re.search(pattern, text)
+                if match:
+                    speed = float(match.group(1))
+                    print(f"[{prefix}] {speed}")
+                    await queue.put(speed)
     
     await asyncio.gather(
         read_stream(process.stdout, f"{name}-stdout"),
