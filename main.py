@@ -34,14 +34,19 @@ async def run():
     parser.add_argument("-c", "--concurrency", type=int, default=5, help="concurrency")
     parser.add_argument("-t", "--template", type=str, default="uhd60", help="template name")
     parser.add_argument("-l", "--list", action="store_true", help="list available templates")
+    parser.add_argument("-C", "--command", action="store_true", help="print ffmpeg command only")
     args = parser.parse_args()
 
     if args.list:
         from template import H264TEMPLATES, H265TEMPLATES
         print("H264 Templates:")
-        print("/".join(H264TEMPLATES))
+        print("  " + "/".join(H264TEMPLATES))
         print("H265 Templates:")
-        print("/".join(H265TEMPLATES))
+        print("  " + "/".join(H265TEMPLATES))
+        return
+
+    if args.command:
+        print(ffmpeg_cmd(args.template, 0))
         return
 
     tasks = []
