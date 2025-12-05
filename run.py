@@ -4,7 +4,7 @@ import re
 
 pattern = r"speed=([\d.]+)"
 
-async def run_ffmpeg(name: str, cmd: str, speed_store: list):
+async def run_ffmpeg(name: str, cmd: str, queue: asyncio.Queue):
     print(f"[{name}] start...")
     process = await asyncio.create_subprocess_exec(
         *shlex.split(cmd),
@@ -21,7 +21,7 @@ async def run_ffmpeg(name: str, cmd: str, speed_store: list):
             match = re.search(pattern, text)
             if match:
                 speed = float(match.group(1))
-                speed_store.append(speed)
+                await queue.put(speed)
     
     await asyncio.gather(
         read_stream(process.stdout, f"{name}-stdout"),
