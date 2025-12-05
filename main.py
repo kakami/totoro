@@ -34,6 +34,7 @@ async def speed_aggregator(queue: asyncio.Queue, stop_event: asyncio.Event):
             if speeds:
                 avg_speed = sum(speeds) / len(speeds)
                 print("Average speed:", round(avg_speed, 3))
+                speeds.clear()
             last_report = time.time()
 
     print("Aggregator exit.")

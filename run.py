@@ -21,7 +21,7 @@ async def run_ffmpeg(name: str, cmd: str, queue: asyncio.Queue):
             match = re.search(pattern, text)
             if match:
                 speed = float(match.group(1))
-                print(f"[{prefix}] {speed}")
+                # print(f"[{prefix}] {speed}")
                 await queue.put(speed)
     
     await asyncio.gather(
