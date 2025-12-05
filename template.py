@@ -5,6 +5,7 @@ H264TEMPLATES = [
     "hd",
     "sd",
     "ld",
+    "md",
 ]
 
 H265TEMPLATES = [
