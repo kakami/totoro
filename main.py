@@ -2,7 +2,7 @@
 
 import argparse
 import asyncio
-from time import time
+import time
 from template import build_ffmpeg_cmd
 from run import run_ffmpeg
 
@@ -19,6 +19,7 @@ def main():
 async def speed_aggregator(queue: asyncio.Queue, stop_event: asyncio.Event):
     speeds = []
     last_report = time.time()
+    print('--- Speed Aggregator Started ---')
 
     while not stop_event.is_set() or not queue.empty():
         try:
@@ -47,25 +48,25 @@ async def run():
     stop_event = asyncio.Event()
     aggregator_task = asyncio.ensure_future(speed_aggregator(queue, stop_event))
     for i in range(args.concurrency):
-        tasks.append(
+        t = asyncio.ensure_future(
             run_ffmpeg(
                 f"task{i+1}",
                 f'/home/test/5.4.0/ffmpeg-n7.1/ffmpeg -y  -hide_banner -hwaccel ni_quadra -force_nidec quadra -dec 15 -xcoder-params "out=hw:enableOut1=1:scale1=0x720" -y -vsync 0 -i /home/iuz/video/dota_60_1080.mp4 -filter_complex "ni_quadra_merge=filterblit=2" -force_key_frames source -c:v h265_ni_quadra_enc -xcoder-params "crfFloat=23.0:RcEnable=0:bitrate=3500000:vbvMaxRate=4000000:vbvBufferSize=1000:rdoLevel=1:lookAheadDepth=4:EnableRdoQuant=1:gopPresetIdx=5:enable2PassGop=0:minFramesDelay=1:enableVFR=1:repeatHeaders=1:GenHdrs=1:intraPeriod=0:zeroCopyMode=0:crfMaxIframeEnable=6:totalCuTreeDepth=6:cuTreeFactor=6" /home/iuz/output/out{i+1}.mp4',
                 queue
             )
         )
+        tasks.append(t)
 
 
     # results = await asyncio.gather(*tasks)
     try:
-        while not stop_event.is_set():
-            await asyncio.sleep(1)
-    except KeyboardInterrupt:
-        print("Received exit signal.")
+        await asyncio.gather(*tasks)
+    except asyncio.CancelledError:
+        pass
     finally:
         stop_event.set()
-        for t in tasks:
-            t.cancel()
+        # for t in tasks:
+            # t.cancel()
         await aggregator_task
     # print("All tasks completed:", results)
 
