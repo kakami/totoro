@@ -40,7 +40,7 @@ async def run():
     tasks = []
     queue = asyncio.Queue()
     stop_event = asyncio.Event()
-    aggregator_task = asyncio.create_task(speed_aggregator(queue, stop_event))
+    aggregator_task = asyncio.ensure_future(speed_aggregator(queue, stop_event))
     for i in range(args.concurrency):
         tasks.append(
             run_ffmpeg(
