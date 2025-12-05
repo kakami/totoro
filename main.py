@@ -16,21 +16,26 @@ def main():
     cmd = build_ffmpeg_cmd(args.template, args.input, args.output)
     print(cmd)
 
-async def speed_aggregator(queue: asyncio.Queue, stop_event: asyncio.Event, interval=1.0):
+async def speed_aggregator(queue: asyncio.Queue, stop_event: asyncio.Event):
     speeds = []
-    while not stop_event.is_set():
-        start = time.time()
-        while time.time() - start < interval:
-            try:
-                speed = queue.get_nowait()
-                speeds.append(speed)
-            except asyncio.QueueEmpty:
-                await asyncio.sleep(0.05)
-        
-        if speeds:
-            avg_speed = sum(speeds) / len(speeds)
-            print(f"[AVERAGE SPEED] {avg_speed:.2f}")
-            speeds.clear()
+    last_report = time.time()
+
+    while not stop_event.is_set() or not queue.empty():
+        try:
+            # 最长等 0.1 秒，避免阻塞退出
+            speed = await asyncio.wait_for(queue.get(), timeout=0.1)
+            speeds.append(speed)
+        except asyncio.TimeoutError:
+            pass
+
+        # 每秒打印一次
+        if time.time() - last_report >= 1:
+            if speeds:
+                avg_speed = sum(speeds) / len(speeds)
+                print("Average speed:", round(avg_speed, 3))
+            last_report = time.time()
+
+    print("Aggregator exit.")
 
 async def run():
     parser = argparse.ArgumentParser()
