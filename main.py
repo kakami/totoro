@@ -50,16 +50,24 @@ async def run():
         tasks.append(
             run_ffmpeg(
                 f"task{i+1}",
-                f'/home/test/5.4.0/ffmpeg-n7.1/ffmpeg -y  -hide_banner -hwaccel ni_quadra -force_nidec quadra -dec 0 -xcoder-params "out=hw:enableOut1=1:scale1=0x720" -y -vsync 0 -i /home/iuz/video/dota_60_1080.mp4 -filter_complex "ni_quadra_merge=filterblit=2" -force_key_frames source -c:v h265_ni_quadra_enc -xcoder-params "crfFloat=23.0:RcEnable=0:bitrate=3500000:vbvMaxRate=4000000:vbvBufferSize=1000:rdoLevel=1:lookAheadDepth=4:EnableRdoQuant=1:gopPresetIdx=5:enable2PassGop=0:minFramesDelay=1:enableVFR=1:repeatHeaders=1:GenHdrs=1:intraPeriod=0:zeroCopyMode=0:crfMaxIframeEnable=6:totalCuTreeDepth=6:cuTreeFactor=6" /home/iuz/video/out{i+1}.mp4',
+                f'/home/test/5.4.0/ffmpeg-n7.1/ffmpeg -y  -hide_banner -hwaccel ni_quadra -force_nidec quadra -dec 15 -xcoder-params "out=hw:enableOut1=1:scale1=0x720" -y -vsync 0 -i /home/iuz/video/dota_60_1080.mp4 -filter_complex "ni_quadra_merge=filterblit=2" -force_key_frames source -c:v h265_ni_quadra_enc -xcoder-params "crfFloat=23.0:RcEnable=0:bitrate=3500000:vbvMaxRate=4000000:vbvBufferSize=1000:rdoLevel=1:lookAheadDepth=4:EnableRdoQuant=1:gopPresetIdx=5:enable2PassGop=0:minFramesDelay=1:enableVFR=1:repeatHeaders=1:GenHdrs=1:intraPeriod=0:zeroCopyMode=0:crfMaxIframeEnable=6:totalCuTreeDepth=6:cuTreeFactor=6" /home/iuz/output/out{i+1}.mp4',
                 queue
             )
         )
 
 
-    results = await asyncio.gather(*tasks)
-    stop_event.set()
-    await aggregator_task
-    print("All tasks completed:", results)
+    # results = await asyncio.gather(*tasks)
+    try:
+        while not stop_event.is_set():
+            await asyncio.sleep(1)
+    except KeyboardInterrupt:
+        print("Received exit signal.")
+    finally:
+        stop_event.set()
+        for t in tasks:
+            t.cancel()
+        await aggregator_task
+    # print("All tasks completed:", results)
 
 if __name__ == "__main__":
     # main()
