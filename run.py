@@ -6,6 +6,7 @@ pattern = r"speed=([\d.]+)"
 
 async def run_ffmpeg(name: str, cmd: str, queue: asyncio.Queue):
     print(f"[{name}] start...")
+    print(f"[{cmd}]")
     process = await asyncio.create_subprocess_exec(
         *shlex.split(cmd),
         stdout=asyncio.subprocess.PIPE,
