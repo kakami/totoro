@@ -20,15 +20,14 @@ async def _handle_vmaf_default(args):
         i = j + args.start
         output1 = f'/home/iuz/images/ff_{i}.png'
         cmd1 = f'/home/iuz/ffmpeg/ffmpeg -i {args.input1} -vf "select=\'eq(n,{i})\'" -vframes 1 {output1} -y'
-        await _run_cmd("ff", cmd1)
+        await _run_cmd("ff", i, cmd1)
         output2 = f'/home/iuz/images/ni_{i}.png'
         cmd2 = f'/home/iuz/ffmpeg/ffmpeg -i {args.input2} -vf "select=\'eq(n,{i})\'" -vframes 1 {output2} -y'
-        await _run_cmd("ni", cmd2)
+        await _run_cmd("ni", i, cmd2)
         cmd3 = f'/home/iuz/ffmpeg/ffmpeg -i {output1} -i {output2} -lavfi libvmaf="log_path=vmaf_ff.json:log_fmt=json" -f null - -y'
-        print(cmd3)
-        await _run_cmd("vmaf", cmd3)
+        await _run_cmd("vmaf", i, cmd3)
 
-async def _run_cmd(name: str, cmd: str):
+async def _run_cmd(name: str, index: int, cmd: str):
     process = await asyncio.create_subprocess_exec(
         *shlex.split(cmd),
         stdout=asyncio.subprocess.PIPE,
@@ -48,7 +47,7 @@ async def _run_cmd(name: str, cmd: str):
                 match = re.search(pattern, text)
                 if match:
                     score = float(match.group(1))
-                    print(f"[{prefix}] {score}")
+                    print(f"[{prefix}] <{index}> {score}")
     
     await asyncio.gather(
         read_stream(process.stdout, f"{name}-stdout"),
