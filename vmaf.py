@@ -42,8 +42,8 @@ async def _run_cmd(name: str, cmd: str):
             if not chunk:
                 break
             buffer += chunk
-            while b"\r" in buffer:
-                line, buffer = buffer.split(b"\r", 1)
+            while b"\n" in buffer:
+                line, buffer = buffer.split(b"\n", 1)
                 text = line.decode(errors="ignore").strip()
                 match = re.search(pattern, text)
                 if match:
@@ -55,5 +55,4 @@ async def _run_cmd(name: str, cmd: str):
         read_stream(process.stderr, f"{name}-stderr"),
     )
 
-    return_code = await process.wait()
-    print(f"[{name}] finished with return code {return_code}")
+    await process.wait()
