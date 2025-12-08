@@ -11,7 +11,7 @@ def add_vmaf_subcommand(parsers):
     vmaf_parser.add_argument("--start", type=int, default=0, help="from v frame")
     vmaf_parser.add_argument("--max", type=int, default=30, help="max v frames")
 
-    vmaf_parser.set_defaults(func=_handle_vmaf_default)
+    vmaf_parser.set_defaults(handler=_handle_vmaf_default)
 
     return vmaf_parser
 

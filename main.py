@@ -43,10 +43,13 @@ async def run():
     args = parser.parse_args()
 
     if hasattr(args, "handler"):
+        print("--- 1 ---")
         h = args.handler
         if asyncio.iscoroutinefunction(h):
+            print("--- 2 ---")
             return await h(args)
         else:
+            print("--- 3 ---")
             return h(args)
 
     input = args.input
