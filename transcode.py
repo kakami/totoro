@@ -78,7 +78,8 @@ async def _speed_aggregator(queue: asyncio.Queue, stop_event: asyncio.Event):
         if time.time() - last_report >= 1:
             if speeds:
                 avg_speed = sum(speeds) / len(speeds)
-                print(f"Concurrency: {util.concurrency}, Average speed: {round(avg_speed, 3)}")
+                counter = util.counter.get()
+                print(f"Concurrency: {counter}, Average speed: {round(avg_speed, 3)}")
                 speeds.clear()
             last_report = time.time()
 
@@ -86,7 +87,7 @@ async def _speed_aggregator(queue: asyncio.Queue, stop_event: asyncio.Event):
 
 async def _run_ffmpeg(name: str, cmd: str, queue: asyncio.Queue):
     print(f"[{name}] start...")
-    print(f"[{cmd}]")
+    util.counter.inc()
     process = await asyncio.create_subprocess_exec(
         *shlex.split(cmd),
         stdout=asyncio.subprocess.PIPE,
@@ -116,4 +117,5 @@ async def _run_ffmpeg(name: str, cmd: str, queue: asyncio.Queue):
 
     return_code = await process.wait()
     print(f"[{name}] finished with return code {return_code}")
+    util.counter.dec()
     return return_code

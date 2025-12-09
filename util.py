@@ -1,6 +1,7 @@
 import os
 import shutil
 import importlib.util
+from atomic_int import AtomicInt
 
 CONFIG_FILE = "config.py"
 DEFAULT_CONFIG_FILE = "config.default.py"
@@ -9,6 +10,7 @@ DEFAULT_CONFIG_FILE = "config.default.py"
 dev = 15
 concurrency = 5
 output_dir = "/home/iuz/output_15"
+counter = AtomicInt(0)
 
 def ensure_config_exists():
     if not os.path.exists(CONFIG_FILE):
