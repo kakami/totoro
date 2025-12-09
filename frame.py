@@ -1,0 +1,1 @@
+#ffprobe -select_streams v -show_frames -show_entries frame=pict_type,pts_time,pkt_dts_time,key_frame -v quiet /home/iuz/video/dota_30_1080.mp4 | head -n 101 | grep -E "\[FRAME\]|pict_type|key_frame"

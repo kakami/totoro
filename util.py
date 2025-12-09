@@ -5,6 +5,11 @@ import importlib.util
 CONFIG_FILE = "config.py"
 DEFAULT_CONFIG_FILE = "config.default.py"
 
+# 设置几个全局变量
+dev = 15
+concurrency = 5
+output_dir = "/home/iuz/output_15"
+
 def ensure_config_exists():
     if not os.path.exists(CONFIG_FILE):
         shutil.copyfile(DEFAULT_CONFIG_FILE, CONFIG_FILE)

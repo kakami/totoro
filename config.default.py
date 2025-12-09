@@ -4,4 +4,4 @@ class Config:
     input = "/home/iuz/video/dota_60_1080.mp4"
     input_60_1080 = "/home/iuz/video/dota_60_1080.mp4"
     input_30_1080 = "/home/iuz/video/dota_30_1080.mp4"
-    output_dir = "/home/iuz/output/"
+    output_dir = "/home/iuz/"

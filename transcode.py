@@ -1,12 +1,12 @@
 import asyncio
 import time
 import shlex
+import os
 import re
-from util import load_config
+import util
 from template import ffmpeg_cmd
 
 pattern = r"speed=([\d.]+)"
-concurrency = 5
 
 def add_transcode_subcommand(parsers):
     parser = parsers.add_parser('transcode', help='Run video transcoding')
@@ -14,15 +14,17 @@ def add_transcode_subcommand(parsers):
     parser.add_argument("-t", "--template", type=str, default="uhd60", help="template name")
     parser.add_argument("-l", "--list", action="store_true", help="list available templates")
     parser.add_argument("-C", "--command", action="store_true", help="print ffmpeg command only")
+    parser.add_argument("--dev", type=int, default=15, help="device id")
 
     parser.set_defaults(handler=_handle_transcode_default)
     return parser
 
 async def _handle_transcode_default(args):
-    cfg_module = load_config()
+    cfg_module = util.load_config()
     cfg = cfg_module.Config
-    global concurrency
-    concurrency = args.concurrency
+    util.concurrency = args.concurrency
+    util.dev = args.dev
+    util.output_dir = os.path.join(cfg.output_dir, f"output_{util.dev}")
 
     if args.list:
         from template import H264TEMPLATES, H265TEMPLATES
@@ -76,7 +78,7 @@ async def _speed_aggregator(queue: asyncio.Queue, stop_event: asyncio.Event):
         if time.time() - last_report >= 1:
             if speeds:
                 avg_speed = sum(speeds) / len(speeds)
-                print(f"Concurrency: {concurrency}, Average speed: {round(avg_speed, 3)}")
+                print(f"Concurrency: {util.concurrency}, Average speed: {round(avg_speed, 3)}")
                 speeds.clear()
             last_report = time.time()
 
