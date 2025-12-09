@@ -11,6 +11,7 @@ dev = 15
 concurrency = 5
 output_dir = "/home/iuz/output_15"
 counter = AtomicInt(0)
+input = "/home/iuz/video/dota_30_1080.mp4"
 
 def ensure_config_exists():
     if not os.path.exists(CONFIG_FILE):

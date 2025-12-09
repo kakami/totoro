@@ -15,6 +15,7 @@ def add_transcode_subcommand(parsers):
     parser.add_argument("-l", "--list", action="store_true", help="list available templates")
     parser.add_argument("-C", "--command", action="store_true", help="print ffmpeg command only")
     parser.add_argument("--dev", type=int, default=15, help="device id")
+    parser.add_argument("--input", type=str, default="", help="input file path")
 
     parser.set_defaults(handler=_handle_transcode_default)
     return parser
@@ -25,6 +26,7 @@ async def _handle_transcode_default(args):
     util.concurrency = args.concurrency
     util.dev = args.dev
     util.output_dir = os.path.join(cfg.output_dir, f"output_{util.dev}")
+    util.input = args.input if args.input else cfg.input
 
     if args.list:
         from template import H264TEMPLATES, H265TEMPLATES
@@ -35,7 +37,7 @@ async def _handle_transcode_default(args):
         return
     
     if args.command:
-        print(ffmpeg_cmd(args.template, cfg.input, 0))
+        print(ffmpeg_cmd(args.template, util.input, 0))
         return
     
     tasks = []
