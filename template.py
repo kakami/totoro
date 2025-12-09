@@ -20,7 +20,7 @@ H265TEMPLATES = [
 def ffmpeg_cmd(template_name: str, input: str, index: int):
     binary = "/home/test/5.4.0/ffmpeg-n7.1/ffmpeg"
     global_prefix = "-y  -hide_banner -hwaccel ni_quadra -force_nidec quadra -dec 15 -xcoder-params out=hw"
-    param = "crfFloat=23.0:RcEnable=0:rdoLevel=1:lookAheadDepth=4:EnableRdoQuant=1:gopPresetIdx=5:enable2PassGop=0:minFramesDelay=1:enableVFR=1:repeatHeaders=1:GenHdrs=1:intraPeriod=0:zeroCopyMode=0:crfMaxIframeEnable=6:totalCuTreeDepth=6:cuTreeFactor=6"
+    param = "crfFloat=23.0:RcEnable=0:rdoLevel=1:lookAheadDepth=4:EnableRdoQuant=1:gopPresetIdx=5:enable2PassGop=1:minFramesDelay=1:enableVFR=1:repeatHeaders=1:GenHdrs=1:intraPeriod=0:zeroCopyMode=0:crfMaxIframeEnable=6:totalCuTreeDepth=6:cuTreeFactor=6"
     _720p = "ni_quadra_scale=1280x720:filterblit=2"
     _540p = "ni_quadra_scale=960x540:filterblit=2"
     _360p = "ni_quadra_scale=640x360:filterblit=2"

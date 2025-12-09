@@ -2,6 +2,8 @@ import asyncio
 import shlex
 import re
 
+from util import load_config
+
 pattern = r"VMAF score: ([\d.]+)"
 
 def add_vmaf_subcommand(parsers):
@@ -19,12 +21,15 @@ def add_vmaf_subcommand(parsers):
     return vmaf_parser
 
 async def _handle_vmaf_default(args):
+    cfg_module = load_config()
+    cfg = cfg_module.Config
+
     if args.auto:
         return await _handle_auto(args)
     
-    print('----------')
-        
-
+    cmd = f'{cfg.vmaf_ffmpeg} -i {args.input1} -i {args.input2} -lavfi libvmaf="log_path=vmaf_log.json:log_fmt=json" -f null - -y'
+    await _run_cmd("vmaf", f"{args.index1}_{args.index2}", cmd)
+    
 async def _handle_auto(args):
     for j in range(args.max):
         i = j + args.start
