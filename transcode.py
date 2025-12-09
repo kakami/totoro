@@ -6,6 +6,7 @@ from util import load_config
 from template import ffmpeg_cmd
 
 pattern = r"speed=([\d.]+)"
+concurrency = 5
 
 def add_transcode_subcommand(parsers):
     parser = parsers.add_parser('transcode', help='Run video transcoding')
@@ -20,6 +21,7 @@ def add_transcode_subcommand(parsers):
 async def _handle_transcode_default(args):
     cfg_module = load_config()
     cfg = cfg_module.Config
+    concurrency = args.concurrency
 
     if args.list:
         from template import H264TEMPLATES, H265TEMPLATES
@@ -73,7 +75,7 @@ async def _speed_aggregator(queue: asyncio.Queue, stop_event: asyncio.Event):
         if time.time() - last_report >= 1:
             if speeds:
                 avg_speed = sum(speeds) / len(speeds)
-                print("Average speed:", round(avg_speed, 3))
+                print(f"Concurrency: {concurrency}, Average speed: {round(avg_speed, 3)}")
                 speeds.clear()
             last_report = time.time()
 

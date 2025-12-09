@@ -28,6 +28,7 @@ async def _handle_vmaf_default(args):
         return await _handle_auto(args)
     
     cmd = f'{cfg.vmaf_ffmpeg} -i {args.input1} -i {args.input2} -lavfi libvmaf="log_path=vmaf_log.json:log_fmt=json" -f null - -y'
+    print(cmd)
     await _run_cmd("vmaf", f"{args.index1}_{args.index2}", cmd)
     
 async def _handle_auto(args):
