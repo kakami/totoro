@@ -21,6 +21,7 @@ def add_transcode_subcommand(parsers):
 async def _handle_transcode_default(args):
     cfg_module = load_config()
     cfg = cfg_module.Config
+    global concurrency
     concurrency = args.concurrency
 
     if args.list:
