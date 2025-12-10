@@ -36,8 +36,8 @@ async def _handle_transcode_default(args):
         print("  " + "/".join(H265TEMPLATES))
         return
     
+    print(ffmpeg_cmd(args.template, util.input, 0))
     if args.command:
-        print(ffmpeg_cmd(args.template, util.input, 0))
         return
     
     tasks = []
@@ -48,7 +48,7 @@ async def _handle_transcode_default(args):
         t = asyncio.ensure_future(
             _run_ffmpeg(
                 f"task{i+1}",
-                ffmpeg_cmd(args.template, cfg.input, i),
+                ffmpeg_cmd(args.template, util.input, i),
                 queue
             )
         )
